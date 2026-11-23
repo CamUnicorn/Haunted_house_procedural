@@ -16,6 +16,7 @@ namespace StealthGame
                 return;
         
             player.AddKey(KeyName);
+            ProceduralSfx.KeyPickup(transform.position); // audio procedural
             Destroy(gameObject);
         }
     }

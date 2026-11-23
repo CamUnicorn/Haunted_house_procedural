@@ -23,7 +23,7 @@ public class ProceduralFootsteps : ProceduralVoice
     }
 
     /// <summary>Llamar desde el hilo principal cada vez que el personaje da un paso.</summary>
-    public void Step(float intensity = 1f, Surface surface = Surface.Wood)
+    public virtual void Step(float intensity = 1f, Surface surface = Surface.Wood)
     {
         pIntensity = Mathf.Clamp01(intensity);
         pSurface = (int)surface;

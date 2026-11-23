@@ -21,13 +21,22 @@ public class ProceduralGhostVoice : ProceduralVoice
         return (seed & 0xFFFFFF) / 8388608f - 1f;
     }
 
+    Transform listener;
+
     void Update()
     {
         if (!autoAgitation) return;
-        var l = FindObjectOfType<AudioListener>();
-        if (l == null) return;
-        float dist = Vector3.Distance(l.transform.position, transform.position);
-        agitation = 1f - Mathf.Clamp01(dist / maxDistance);
+        if (listener == null)
+        {
+            var l = FindAnyObjectByType<AudioListener>(); // se cachea: no buscar cada frame
+            if (l == null) return;
+            listener = l.transform;
+        }
+        float dist = Vector3.Distance(listener.position, transform.position);
+        float byDistance = 1f - Mathf.Clamp01(dist / maxDistance);
+        // Con la tension global alta, los fantasmas tambien se agitan (aunque esten algo lejos)
+        float global = TensionManager.Instance != null ? TensionManager.Instance.Tension * 0.5f : 0f;
+        agitation = Mathf.Max(byDistance, global);
     }
 
     protected override void Generate(float[] d)

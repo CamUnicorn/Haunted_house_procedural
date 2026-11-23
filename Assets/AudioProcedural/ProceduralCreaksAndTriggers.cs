@@ -21,17 +21,23 @@ public class ProceduralCreaksAndTriggers : MonoBehaviour
     public float cooldown = 2f;
 
     float next, lastTrigger = -99f;
+    Transform listener;
 
     void Start() { next = Time.time + Random.Range(intervalSeconds.x, intervalSeconds.y); }
 
     void Update()
     {
         if (!randomAroundListener || Time.time < next) return;
-        next = Time.time + Random.Range(intervalSeconds.x, intervalSeconds.y);
-        var l = FindObjectOfType<AudioListener>();
-        if (l == null) return;
+        float t = TensionManager.Instance != null ? TensionManager.Instance.Tension : 0f;
+        next = Time.time + Random.Range(intervalSeconds.x, intervalSeconds.y) * Mathf.Lerp(1f, 0.4f, t); // mas tension = mas crujidos
+        if (listener == null)
+        {
+            var l = FindAnyObjectByType<AudioListener>();
+            if (l == null) return;
+            listener = l.transform;
+        }
         Vector2 c = Random.insideUnitCircle.normalized * Random.Range(radius.x, radius.y);
-        ProceduralSfx.Creak(l.transform.position + new Vector3(c.x, 0f, c.y));
+        ProceduralSfx.Creak(listener.position + new Vector3(c.x, 0f, c.y));
     }
 
     void OnTriggerEnter(Collider other)
